@@ -1,0 +1,11 @@
+{
+  "entryPoints": [
+    "./src/pe102/*.ts", 
+      
+    "./src/*.ts" 
+
+    
+    
+  ],
+  "out": "./docs"
+}

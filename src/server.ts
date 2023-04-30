@@ -4,6 +4,7 @@ import { Document, connect, model, Schema } from 'mongoose';
 import { usersRouter } from './routers/users/users.js';
 import { defaultRouter } from './routers/default.js';
 import { trackRouter } from './routers/tracks/tracks.js';
+import { challengesRouter } from './routers/challenges/challenges.js';
 
 
 connect('mongodb://127.0.0.1:27017/destravate').then(() => {
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use(usersRouter);
 app.use(trackRouter);
+app.use(challengesRouter);
 app.use(defaultRouter);
 
 

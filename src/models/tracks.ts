@@ -6,14 +6,14 @@ export type GeoLocalization = [number, number]
 
 interface TrackDocumentInterface extends Document {
   id: number;
-  nombre: string;
-  geolocalizacionInicio: GeoLocalization;
-  geolocalizacionFinal: GeoLocalization;
-  longitudKm: number;
-  desnivelMedio: number;
-  Usuarios: number[];
-  tipoActividad: Actividad;
-  calificacionMedia: number;
+  name: string;
+  initialGeo: GeoLocalization;
+  finalGeo: GeoLocalization;
+  kmLength: number;
+  avegLevel: number;
+  users: number[];
+  activityType: Actividad;
+  avegMark: number;
 }
 
 const TrackSchema = new Schema<TrackDocumentInterface>({
@@ -22,37 +22,37 @@ const TrackSchema = new Schema<TrackDocumentInterface>({
     unique: true,
     required: true,
   },
-  nombre: {
+  name: {
     type: String,
     required: true,
     trim: true,
   },
-  geolocalizacionInicio: {
+  initialGeo: {
     type: [Number, Number],
     required: true,
   },
-  geolocalizacionFinal: {
+  finalGeo: {
     type: [Number, Number],
     required: true,
   },
-  longitudKm: {
+  kmLength: {
     type: Number,
     required: true,
   },
-  desnivelMedio: {
+  avegLevel: {
     type: Number,
     required: true,
   },
-  Usuarios: {
+  users: {
     type: [Number],
     required: true,
   },
-  tipoActividad: {
+  activityType: {
     type: String,
     default: "bicicleta",
     enum: ["bicicleta", "correr"],
   },
-  calificacionMedia: {
+  avegMark: {
     type: Number,
     required: true,
   },

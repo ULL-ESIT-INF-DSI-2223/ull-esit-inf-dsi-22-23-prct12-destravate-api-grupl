@@ -22,7 +22,7 @@ export interface ChallengeDocumentInterface extends Document {
   ruteChallenge: TrackDocumentInterface[];
   typeActivitie: "bicicleta" | "correr";
   kmTotal: number;
-  idUsersCahllenge: UsersDocumentInterface[];
+  idUsersChallenge: UsersDocumentInterface[];
 
 }
 
@@ -53,7 +53,7 @@ const ChallengeSchema = new Schema<ChallengeDocumentInterface>({
     type: Number,
     required: true
   },
-  idUsersCahllenge: {
+  idUsersChallenge: {
     type: [Schema.Types.ObjectId],
     ref: 'User',
     required: true

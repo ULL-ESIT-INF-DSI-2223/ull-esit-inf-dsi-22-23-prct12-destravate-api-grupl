@@ -23,7 +23,7 @@ challengesRouter.post('/challenges', async (req, res) => {
 
   try {
 
-    const arrayUsers = req.body.idUsersCahllenge;
+    const arrayUsers = req.body.idUsersChallenge;
     const arrayIdUsers = [];
     
     for (let i = 0; i < arrayUsers.length; i++) {
@@ -42,7 +42,7 @@ challengesRouter.post('/challenges', async (req, res) => {
       ...req.body
     });
 
-    challengeNew.idUsersCahllenge = arrayIdUsers;
+    challengeNew.idUsersChallenge = arrayIdUsers;
     await challengeNew.save();
     return res.status(201).send(challengeNew);
     
@@ -90,7 +90,7 @@ challengesRouter.patch('/challenges', async(req, res) => {
       error: 'A name must be provided',
     });
   } else {
-    const allowedUpdates = ['id', 'name', 'ruteChallenge', 'typeActivitie', 'kmTotal', 'idUsersCahllenge'];
+    const allowedUpdates = ['id', 'name', 'ruteChallenge', 'typeActivitie', 'kmTotal', 'idUsersChallenge'];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate =
       actualUpdates.every((update) => allowedUpdates.includes(update));
@@ -118,7 +118,7 @@ challengesRouter.patch('/challenges', async(req, res) => {
   }
 });     
 
-challengesRouter.delete('/challenges/', async(req, res) => {
+challengesRouter.delete('/challenges', async(req, res) => {
 
 
   const filter = req.query.name?{name: req.query.name.toString()}:{};
@@ -137,19 +137,28 @@ challengesRouter.delete('/challenges/', async(req, res) => {
   // }
 
   try {
-    const dbUsers = await Users.find({activeChallenges: {"$in"}});
-    const arrayIdUsers = [];
+    const challenge = await Challenges.findOne(filter);
+    if (!challenge) {
+      return res.status(404).send("Challenge not found");
+    } 
+    const dbUsers = await Users.find({ activeChallenges : { $all : [challenge._id] }});
+    return res.status(201).send(dbUsers);
+
+
+    //const arrayIdUsers = [];
     
-    for (let i = 0; i < arrayUsers.length; i++) {
-      const user = await Users.findOne({id: arrayUsers[i]});
-      if (!user) {
-      return res.status(404).send({
-        error: "User not found"
-      });
-      }
-      arrayIdUsers.push(user._id);
-    }
-    
+    // for (let i = 0; i < arrayUsers.length; i++) {
+    //   const user = await Users.findOne({id: arrayUsers[i]});
+    //   if (!user) {
+    //   return res.status(404).send({
+    //     error: "User not found"
+    //   });
+    //   }
+    //   arrayIdUsers.push(user._id);
+    // }
+  } catch (error) {
+      //
+  }
 
 
 

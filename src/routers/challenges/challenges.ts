@@ -1,56 +1,90 @@
+/**
+ * Universidad de La Laguna
+ * Escuela Superior de Ingeniería y Tecnología
+ * Grado en Ingeniería Informática
+ * Asignatura: Desarrollo de Sistemas Informáticos
+ * Curso: 3º
+ * Práctica 12: API REST Destravate
+ * @author Ismael Martín Herrera
+ * @author Alberto Zarza Martín
+ * @email alu0101397375@ull.edu.es
+ * @date 15/05/2023
+ */
+
 import express from 'express';
 import { Challenges } from '../../models/challenges.js';
+import { Users } from '../../models/users.js';
+
+
 
 export const challengesRouter = express.Router();
 
-challengesRouter.post('/challenges', (req, res) => {
-  
-  const challenge = new Challenges(req.body);
+challengesRouter.post('/challenges', async (req, res) => {
 
-  challenge.save().then((challenge) => {
-    res.status(201).send(challenge);
-  }).catch((error) => {
-    res.status(400).send(error);
-  });
+  try {
 
+    const arrayUsers = req.body.idUsersCahllenge;
+    const arrayIdUsers = [];
+    
+    for (let i = 0; i < arrayUsers.length; i++) {
+      const user = await Users.findOne({id: arrayUsers[i]});
+      if (!user) {
+      return res.status(404).send({
+        error: "User not found"
+      });
+      }
+      arrayIdUsers.push(user._id);
+    }
+
+    
+    
+    const challengeNew= new Challenges({
+      ...req.body
+    });
+
+    challengeNew.idUsersCahllenge = arrayIdUsers;
+    await challengeNew.save();
+    return res.status(201).send(challengeNew);
+    
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
-challengesRouter.get('/challenges', (req, res) => {
+challengesRouter.get('/challenges', async(req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
-
-  Challenges.find(filter).then((challenge) => {
+  try{
+    const challenge = await Challenges.find(filter);
     if (challenge.length !== 0) {
       res.send(challenge);
     } else {
       res.status(404).send();
     }
-  }).catch(() => {
+  }
+  catch{
     res.status(500).send();
-  });
+  }
 });
 
-challengesRouter.get('/challenges/:id', (req, res) => {
-  Challenges.findById(req.params.id).then((challenge) => {
+challengesRouter.get('/challenges/:id', async(req, res) => {
+  const filter = req.params.id?{id: Number(req.params.id)}:{};
+  try {
+    const challenge = await Challenges.find(filter);
     if (!challenge) {
       res.status(404).send();
     } else {
       res.send(challenge);
     }
-  }).catch(() => {
+  }
+  catch{
     res.status(500).send();
-  });
+  }
 });
 
-/*
-  id: number;
-  name: string;
-  ruteChallenge: number[];
-  typeActivitie: "bicicleta" | "correr";
-  kmTotal: number;
-  idUsersCahllenge: number[];
- */
 
-challengesRouter.patch('/challenges', (req, res) => {
+challengesRouter.patch('/challenges', async(req, res) => {
+
+
   if (!req.query.name) {
     res.status(400).send({
       error: 'A name must be provided',
@@ -58,7 +92,6 @@ challengesRouter.patch('/challenges', (req, res) => {
   } else {
     const allowedUpdates = ['id', 'name', 'ruteChallenge', 'typeActivitie', 'kmTotal', 'idUsersCahllenge'];
     const actualUpdates = Object.keys(req.body);
-    console.log(actualUpdates);
     const isValidUpdate =
       actualUpdates.every((update) => allowedUpdates.includes(update));
 
@@ -67,18 +100,57 @@ challengesRouter.patch('/challenges', (req, res) => {
         error: 'Update is not permitted',
       });
     } else {
-      Challenges.findOneAndUpdate({name: req.query.name.toString()}, req.body, {
-        new: true,
-        runValidators: true,
-      }).then((challenge) => {
+      try{
+        const challenge = await Challenges.findOneAndUpdate({name: req.query.name.toString()}, req.body, {
+          new: true,
+          runValidators: true,
+        });
         if (!challenge) {
           res.status(405).send();
         } else {
           res.send(challenge);
         }
-      }).catch((error) => {
-        res.status(400).send(error);
-      });
+      }
+      catch{
+        res.status(500).send();
+      }
     }
   }
+});     
+
+challengesRouter.delete('/challenges/', async(req, res) => {
+
+
+  const filter = req.query.name?{name: req.query.name.toString()}:{};
+  
+  // try{ 
+  //   const challenge = Challenges.findOneAndDelete(filter);
+  //   if (!challenge) {
+  //     return res.status(404).send();
+  //   } 
+    
+  //   return res.send(challenge);
+    
+  // }
+  // catch(error){
+  //   return res.status(500).send(error);
+  // }
+
+  try {
+    const dbUsers = await Users.find({activeChallenges: {"$in"}});
+    const arrayIdUsers = [];
+    
+    for (let i = 0; i < arrayUsers.length; i++) {
+      const user = await Users.findOne({id: arrayUsers[i]});
+      if (!user) {
+      return res.status(404).send({
+        error: "User not found"
+      });
+      }
+      arrayIdUsers.push(user._id);
+    }
+    
+
+
+
 });

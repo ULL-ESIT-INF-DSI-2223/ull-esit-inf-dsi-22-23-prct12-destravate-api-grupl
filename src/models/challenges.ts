@@ -1,12 +1,28 @@
-import { Document, Schema, model } from 'mongoose';
+/**
+ * Universidad de La Laguna
+ * Escuela Superior de Ingeniería y Tecnología
+ * Grado en Ingeniería Informática
+ * Asignatura: Desarrollo de Sistemas Informáticos
+ * Curso: 3º
+ * Práctica 12: API REST Destravate
+ * @author Ismael Martín Herrera
+ * @author Alberto Zarza Martín
+ * @email alu0101397375@ull.edu.es
+ * @date 15/05/2023
+ */
 
-interface ChallengeDocumentInterface extends Document {
+import { Document, Schema, model } from 'mongoose';
+import { UsersDocumentInterface } from './users.js';
+import { TrackDocumentInterface } from './tracks.js';
+
+
+export interface ChallengeDocumentInterface extends Document {
   id: number;
   name: string;
-  ruteChallenge: number[];
+  ruteChallenge: TrackDocumentInterface[];
   typeActivitie: "bicicleta" | "correr";
   kmTotal: number;
-  idUsersCahllenge: number[];
+  idUsersCahllenge: UsersDocumentInterface[];
 
 }
 
@@ -24,7 +40,8 @@ const ChallengeSchema = new Schema<ChallengeDocumentInterface>({
     trim: true
   },
   ruteChallenge: {
-    type: [Number],
+    type: [Schema.Types.ObjectId],
+    ref: 'Track',
     required: true
   },
   typeActivitie: {
@@ -37,7 +54,8 @@ const ChallengeSchema = new Schema<ChallengeDocumentInterface>({
     required: true
   },
   idUsersCahllenge: {
-    type: [Number],
+    type: [Schema.Types.ObjectId],
+    ref: 'User',
     required: true
   }
 });

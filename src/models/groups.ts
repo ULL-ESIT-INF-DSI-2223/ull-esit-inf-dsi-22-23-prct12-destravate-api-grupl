@@ -55,10 +55,10 @@ const GroupsSchema = new Schema<GroupsDocumentInterface>({
     required: true,
     ref: 'Tracks'
   },
-  routesHistory: { 
-    type: [Number, [Number]],
-    required: true,
-  }
+  // routesHistory: { 
+  //   type: [Number, [Number]],
+  //   required: true,
+  // }
 });
 
 export const GroupsModel = model<GroupsDocumentInterface>('Groups', GroupsSchema);

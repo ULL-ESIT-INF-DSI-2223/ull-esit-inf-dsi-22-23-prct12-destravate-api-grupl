@@ -60,7 +60,7 @@ const UsersSchema = new Schema<UsersDocumentInterface>({
   friends: { 
     type: [Schema.Types.ObjectId],
     ref: 'User',
-    required: true
+    required: true,
   },
 
   groups: { 
@@ -84,14 +84,13 @@ const UsersSchema = new Schema<UsersDocumentInterface>({
     type: [Schema.Types.ObjectId],
     ref: 'Challenge',
     required: true
-  }
+  },
 
   // historicRoutes: { 
   //   type: [[Number, [Number]]] , 
   //   required: true 
   // },
 
-  
 });
 
 export const Users = model<UsersDocumentInterface>('User', UsersSchema);

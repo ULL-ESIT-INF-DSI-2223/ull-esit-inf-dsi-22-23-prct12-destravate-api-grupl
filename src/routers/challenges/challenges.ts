@@ -26,9 +26,8 @@ challengesRouter.post('/challenges', async (req, res) => {
 
     const arrayUsers = req.body.idUsersChallenge;
     const arrayIdUsers = [];
-    
-    for (let i = 0; i < arrayUsers.length; i++) {
-      const user = await Users.findOne({id: arrayUsers[i]});
+    for (const user_ of arrayUsers) {
+      const user = await Users.findOne({id: user_});
       if (!user) {
       return res.status(404).send({
         error: "User not found"
@@ -112,7 +111,7 @@ challengesRouter.patch('/challenges', async(req, res) => {
 
 
   if (!req.query.name) {
-    res.status(400).send({
+    return res.status(400).send({
       error: 'A name must be provided',
     });
   } else {
@@ -121,7 +120,7 @@ challengesRouter.patch('/challenges', async(req, res) => {
     const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update));
  
     if (!isValidUpdate) {
-      res.status(400).send({
+      return res.status(400).send({
         error: 'Update is not permitted',
       });
     } else {
@@ -151,7 +150,7 @@ challengesRouter.patch('/challenges', async(req, res) => {
           runValidators: true,
         });
         if (!challenge) {
-          res.status(405).send();
+          return res.status(405).send();
         } else {
           if (req.body.idUsersChallenge) {
             for (const user of req.body.idUsersChallenge) {
@@ -163,14 +162,13 @@ challengesRouter.patch('/challenges', async(req, res) => {
               await Track.findOneAndUpdate({ _id: route }, { $push: { idChallenges: challenge._id } });
             }
           }
-          res.send(challenge);
+          return res.send(challenge);
         }
-      }
-      catch{
-        res.status(500).send();
+      } catch{
+        return res.status(500).send();
       }
     }
-  }
+  } 
 });     
 
 challengesRouter.delete('/challenges', async(req, res) => {

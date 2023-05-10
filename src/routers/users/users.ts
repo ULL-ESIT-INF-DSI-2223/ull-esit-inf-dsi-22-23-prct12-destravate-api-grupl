@@ -55,8 +55,9 @@ usersRouter.post('/users', async (req, res) => {
 
     
       // Check if the favourite routes of the user exist
-      const arrayRoutes = req.body.favouriteRoutes;
+      const arrayRoutes = req.body.favRoutes;
       const arrayIdRoutes = [];
+      console.log(arrayRoutes);
     
       for (const route_ of arrayRoutes) {
         const route = await Track.findOne({id: route_});
@@ -70,7 +71,7 @@ usersRouter.post('/users', async (req, res) => {
       }
 
       // Check if the challenges of the user exist
-      const arrayChallenges = req.body.challenges;
+      const arrayChallenges = req.body.activeChallenges;
       const arrayIdChallenges = [];
     
       for (const challenge_ of arrayChallenges) {
@@ -168,17 +169,17 @@ usersRouter.patch('/users', async(req, res) => {
 
 
   if (!req.query.name) {
-    res.status(400).send({
+    return res.status(400).send({
       error: 'A name must be provided',
     });
   } else {
-    const allowedUpdates = ['id', 'userName', 'activities', 'friends', 'groups', 'stats', 'favouriteRoutes', 'challenges', 'historic'];
+    const allowedUpdates = ['id', 'userName', 'activities', 'friends', 'groups', 'stats', 'favRoutes', 'challenges', 'historic'];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate =
     actualUpdates.every((update) => allowedUpdates.includes(update));
 
     if (!isValidUpdate) {
-      res.status(400).send({
+      return res.status(400).send({
         error: 'Update is not permitted',
       });
     } else {
@@ -207,8 +208,8 @@ usersRouter.patch('/users', async(req, res) => {
         }
       }
 
-      if(req.body.favouriteRoutes){
-        for (const route_ of req.body.favouriteRoutes) {
+      if(req.body.favRoutes){
+        for (const route_ of req.body.favRoutes) {
           const route = await Track.findOne({id: route_});
           if (!route) {
             return res.status(404).send({
@@ -236,7 +237,7 @@ usersRouter.patch('/users', async(req, res) => {
           runValidators: true,
         });
         if (!user) {
-          res.status(405).send();
+          return res.status(405).send();
         } else {
           if (req.body.friends){
             // Añadir el usuario de los grupos
@@ -251,17 +252,17 @@ usersRouter.patch('/users', async(req, res) => {
               await Track.findOneAndUpdate({_id: route}, {$push: {users: user._id}});
             }
           }
-          if(req.body.favouriteRoutes){
+          if(req.body.favRoutes){
             // Añadir de los retos activos
             for (const challenge of user.activeChallenges) {
               await Challenges.findOneAndUpdate({_id: challenge}, {$push: {idUsersChallenge: user._id}});
             }
           }
-          res.send(user);
+          return res.send(user);
         }
       }
       catch{
-        res.status(500).send();
+        return res.status(500).send();
       }
     }
   }

@@ -1,0 +1,44 @@
+{
+  "id": 1,
+  "name": "challenge pepito",
+  "ruteChallenge": [],
+  "typeActivitie": "bicicleta",
+  "kmTotal": 100,
+  "idUsersChallenge": []
+}
+
+
+{
+  "id": 1;
+  "name": "losreal";
+  "participants": [];
+  "stats": [[0, 0], [0, 0], [0, 0]];
+  "ranking": [];
+  "favouriteRoutes": [];
+
+}
+
+{
+  "id": 1,
+  "name": "el men",
+  "initialGeo": [0,0.2],
+  "finalGeo": [0.1,0],
+  "kmLength": 1000,
+  "avegLevel": 99,
+  "users": [],
+  "activityType": "correr",
+  "avegMark": 10
+}
+
+
+{
+
+  "id": 1;
+  "userName": "El isma",
+  "activities": "correr",
+  "friends": [],
+  "groups": [],
+  "stats": [[0, 0], [0, 0], [0, 0]],
+  "favRoutes":[],
+  "activeChallenges": []
+}

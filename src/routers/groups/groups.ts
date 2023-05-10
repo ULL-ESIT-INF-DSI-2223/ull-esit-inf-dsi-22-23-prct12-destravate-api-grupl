@@ -97,57 +97,11 @@ groupsRouter.get('/groups/:id', async (req, res) => {
 
 });
 
-groupsRouter.delete('/groups', async (req, res) => {
-  const filter = req.query.name?{name: req.query.name.toString()}:{};
-
-
-  try {
-    const group_ = await GroupsModel.findOne(filter);
-    if(!group_) {
-      return res.status(404).send();
-    }
-
-    for (const user of req.body.participants) {
-      await Users.findOneAndUpdate({ _id: user }, { $pull: { groups: group_._id } });
-    };
-
-    const group = await GroupsModel.findOneAndDelete(filter);
-    return res.status(201).send(group);
-  } catch (error) {
-     return res.status(500).send(error);
-  }
-
-});
-
-groupsRouter.delete('/groups/:id', async (req, res) => {
-
-  const filter = { id: Number(req.query.id)};
-
-
-  try {
-    const group_ = await GroupsModel.findOne(filter);
-    if(!group_) {
-      return res.status(404).send();
-    }
-
-    for (const user of req.body.participants) {
-      await Users.findOneAndUpdate({ _id: user }, { $pull: { groups: group_._id } });
-    };
-
-    const group = await GroupsModel.findOneAndDelete(filter);
-    return res.status(201).send(group);
-  } catch (error) {
-     return res.status(500).send(error);
-  }
-
-
-});
-
 groupsRouter.patch('/groups', async (req, res) => {
   if (!req.query.name) {
     return res.status(400).send({error: "No name provided"});
   } else {
-    const allowedUpdates = ['name', 'participants', 'stats', 'ranking', 'favouriteRoutes', 'routesHistory']
+    const allowedUpdates = ['id', 'name', 'participants', 'stats', 'ranking', 'favouriteRoutes', 'routesHistory']
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update)); // comprobación si los parámetros a modificar están permitidos su modificación
     if (!isValidUpdate) {
@@ -155,6 +109,7 @@ groupsRouter.patch('/groups', async (req, res) => {
     } else {
       if (req.body.participants) {
         // Comprobar que los miebros del grupo existen
+        const arrayParticipants = [];
         for (const user of req.body.participants) {
           const user_ = await Users.findOne({id: user});
           if(!user_) {
@@ -162,10 +117,13 @@ groupsRouter.patch('/groups', async (req, res) => {
               {"error": "User not found",
               "user": user});
           }
+          arrayParticipants.push(user_._id);
         }
+        req.body.participants = arrayParticipants;
       }
     // Comprobar que las rutas del grupo existen
       if (req.body.favouriteRoutes) {
+        const arrayFavouriteRoutes = [];
         for (const route of req.body.favouriteRoutes) {
           const route_ = await Track.findOne({id: route});
           if(!route_) {
@@ -173,7 +131,9 @@ groupsRouter.patch('/groups', async (req, res) => {
               {"error": "Route not found",
               "route": route});
           }
+          arrayFavouriteRoutes.push(route_._id);
         }
+        req.body.favouriteRoutes = arrayFavouriteRoutes;
       }
         try {
           const group = await GroupsModel.findOneAndUpdate({name: req.query.name.toString()}, req.body, {
@@ -200,7 +160,7 @@ groupsRouter.patch('/groups', async (req, res) => {
     if (!req.params.id) {
       return res.status(400).send({error: "No id provided"});
     } else {
-      const allowedUpdates = ['name', 'participants', 'stats', 'ranking', 'favouriteRoutes', 'routesHistory']
+      const allowedUpdates = ['id', 'name', 'participants', 'stats', 'ranking', 'favouriteRoutes', 'routesHistory']
       const actualUpdates = Object.keys(req.body);
       const isValidUpdate = actualUpdates.every((update) => allowedUpdates.includes(update)); // comprobación si los parámetros a modificar están permitidos su modificación
       if (!isValidUpdate) {
@@ -208,6 +168,7 @@ groupsRouter.patch('/groups', async (req, res) => {
       } else {
         if (req.body.participants) {
           // Comprobar que los miebros del grupo existen
+          const arrayParticipants = [];
           for (const user of req.body.participants) {
             const user_ = await Users.findOne({id: user});
             if(!user_) {
@@ -215,10 +176,14 @@ groupsRouter.patch('/groups', async (req, res) => {
                 {"error": "User not found",
                 "user": user});
             }
+            arrayParticipants.push(user_._id);
           }
+          req.body.participants = arrayParticipants;
         }
+
       // Comprobar que las rutas del grupo existen
         if (req.body.favouriteRoutes) {
+          const arrayRoutes = [];
           for (const route of req.body.favouriteRoutes) {
             const route_ = await Track.findOne({id: route});
             if(!route_) {
@@ -226,10 +191,12 @@ groupsRouter.patch('/groups', async (req, res) => {
                 {"error": "Route not found",
                 "route": route});
             }
+            arrayRoutes.push(route_._id);
           }
+          req.body.favouriteRoutes = arrayRoutes;
         }
           try {
-            const group = await GroupsModel.findByIdAndUpdate({_id: req.params.id }, req.body, {
+            const group = await GroupsModel.findOneAndUpdate({id: req.params.id }, req.body, {
               new: true, 
               runValidators: true});
             if (!group) {
@@ -248,3 +215,47 @@ groupsRouter.patch('/groups', async (req, res) => {
         }
       }
     });
+groupsRouter.delete('/groups', async (req, res) => {
+  const filter = req.query.name?{name: req.query.name.toString()}:{};
+
+
+  try {
+    const group_ = await GroupsModel.findOne(filter);
+    if(!group_) {
+      return res.status(404).send();
+    }
+
+    for (const user of group_.participants) {
+      await Users.findOneAndUpdate({ _id: user }, { $pull: { groups: group_._id } });
+    };
+
+    const group = await GroupsModel.findOneAndDelete(filter);
+    return res.status(201).send(group);
+  } catch (error) {
+     return res.status(500).send(error);
+  }
+
+});
+
+groupsRouter.delete('/groups/:id', async (req, res) => {
+
+
+  const filter = req.params.id?{id: req.params.id}:{};
+  try {
+    const group_ = await GroupsModel.findOne(filter);
+    if(!group_) {
+      return res.status(404).send();
+    }
+
+    for (const user of group_.participants) {
+      await Users.findOneAndUpdate({ _id: user }, { $pull: { groups: group_._id } });
+    };
+
+    const group = await GroupsModel.findOneAndDelete(filter);
+    return res.status(201).send(group);
+  } catch (error) {
+     return res.status(500).send(error);
+  }
+
+
+});

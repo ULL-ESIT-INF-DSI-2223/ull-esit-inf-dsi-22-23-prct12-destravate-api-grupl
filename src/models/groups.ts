@@ -23,7 +23,12 @@ export interface GroupsDocumentInterface extends Document {
   stats: [[number, number], [number, number], [number, number]];
   ranking: number[];
   favouriteRoutes: TrackDocumentInterface[];
-  routesHistory: [number, number[]][];
+  historicRoutes: [
+    {
+      date: string,
+      route: [string]
+    }
+  ]
 }
 
 const GroupsSchema = new Schema<GroupsDocumentInterface>({
@@ -55,10 +60,21 @@ const GroupsSchema = new Schema<GroupsDocumentInterface>({
     required: true,
     ref: 'Tracks'
   },
-  // routesHistory: { 
-  //   type: [Number, [Number]],
-  //   required: true,
-  // }
+  historicRoutes: [
+    {
+      date: {
+        type: String,
+        required: true,
+        validate: {
+          validator: function(v: string) {
+            return /^\d{2}-\d{2}-\d{4}$/.test(v);
+          },
+          message: props => `${props.value} is not a valid date format (dd-mm-yyyy)!`
+        }
+      },
+      route: [String]
+    }
+  ]
 });
 
 export const GroupsModel = model<GroupsDocumentInterface>('Groups', GroupsSchema);

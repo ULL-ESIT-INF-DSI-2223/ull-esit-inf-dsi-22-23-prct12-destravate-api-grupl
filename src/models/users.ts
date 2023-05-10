@@ -24,14 +24,19 @@ export type Actividad = "bicicleta" | "correr";
 export interface UsersDocumentInterface extends Document {
 
   id: number;
-  userName: string; 
+  name: string; 
   activities: "bicicleta" | "correr";
   friends: UsersDocumentInterface[];
   groups: GroupsDocumentInterface[];
   stats: [[number, number], [number, number], [number, number]];
   favRoutes: TrackDocumentInterface[];
   activeChallenges: ChallengeDocumentInterface[];
-  //historicRoutes:  [number, number[]][];
+  historicRoutes: [
+    {
+      date: string,
+      route: [string]
+    }
+  ]
 
 
 }
@@ -44,7 +49,7 @@ const UsersSchema = new Schema<UsersDocumentInterface>({
     required: true 
   },
 
-  userName: { 
+  name: { 
     type: String, 
     required: true,
     unique: true,
@@ -86,10 +91,21 @@ const UsersSchema = new Schema<UsersDocumentInterface>({
     required: true
   },
 
-  // historicRoutes: { 
-  //   type: [[Number, [Number]]] , 
-  //   required: true 
-  // },
+  historicRoutes: [
+    {
+      date: {
+        type: String,
+        required: true,
+        validate: {
+          validator: function(v: StringExpressionOperatorReturningBoolean) {
+            return /^\d{2}-\d{2}-\d{4}$/.test(v);
+          },
+          message: props => `${props.value} is not a valid date format (dd-mm-yyyy)!`
+        }
+      },
+      route: [String]
+    }
+  ]
 
 });
 

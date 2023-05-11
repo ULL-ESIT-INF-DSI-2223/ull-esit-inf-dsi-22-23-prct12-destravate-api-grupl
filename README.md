@@ -355,11 +355,7 @@ export const Challenges = model<ChallengeDocumentInterface>('Challenge', Challen
 
 Por otra parte, una vez definidos los distintos modelos de la aplicación, se procede a definir las distintas rutas que se pueden realizar sobre la API REST, así como las operaciones CRUD que se pueden realizar sobre cada uno de los objetos de la aplicación Destravate.
 
-En este sentido, se ha definido un directorio ```routers```, en el que se encuentran los ficheros ```user.js```, ```track.js```, ```group.js``` y ```challenge.js```, cada uno dentro de su correspondiente subcarpeta, que contienen las distintas rutas y operaciones CRUD que se pueden realizar sobre cada uno de los objetos de la aplicación Destravate.
-
-En primer lugar, el fichero ```user.js``` contiene las distintas rutas y operaciones CRUD que se pueden realizar sobre el objeto ```User```, tal y como se muestra a continuación:
-
-```ts
+En este sentido, se ha definido un directorio ```routers```, en el que se encuentran los ficheros ```user.js```, ```track.js```, ```group.js``` y ```challenge.js```, cada uno dentro de su correspondiente subcarpeta, que contienen las distintas rutas y operaciones CRUD que se pueden realizar sobre cada uno de los objetos de la aplicación Destravate. Como 
 
 
 

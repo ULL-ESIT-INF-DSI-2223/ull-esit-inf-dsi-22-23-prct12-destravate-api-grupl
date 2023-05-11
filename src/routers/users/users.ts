@@ -91,7 +91,6 @@ usersRouter.post('/users', async (req, res) => {
         favRoutes: arrayIdRoutes,
         activeChallenges: arrayIdChallenges
       });
-
     const userMessage = await user_.save();
     // Añadir el usuario a sus amigos
     for(const friend of user_.friends) {
@@ -126,12 +125,12 @@ usersRouter.post('/users', async (req, res) => {
 usersRouter.get('/users', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
   try{
-    const user = await Users.findOne(filter).populate(
-      {path: 'friends', select: ['name']}
-      // {path: 'groups', select: ['name']}, 
-      // {path: 'favRoutes', select: ['name']}, 
-      // {path: 'activeChallenges', select: ['name']}
-      );
+    const user = await Users.findOne(filter).populate([
+      {path: 'friends', select: ['name']},
+      {path: 'groups', select: ['name']}, 
+      {path: 'favRoutes', select: ['name']}, 
+      {path: 'activeChallenges', select: ['name']}
+    ]);
     if (user) {
       res.send(user);
     } else {

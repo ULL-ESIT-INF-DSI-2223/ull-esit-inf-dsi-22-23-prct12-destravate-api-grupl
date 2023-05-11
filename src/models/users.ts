@@ -97,7 +97,7 @@ const UsersSchema = new Schema<UsersDocumentInterface>({
         type: String,
         required: true,
         validate: {
-          validator: function(v: StringExpressionOperatorReturningBoolean) {
+          validator: function(v: string) {
             return /^\d{2}-\d{2}-\d{4}$/.test(v);
           },
           message: props => `${props.value} is not a valid date format (dd-mm-yyyy)!`

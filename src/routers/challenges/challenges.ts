@@ -95,7 +95,7 @@ challengesRouter.get('/challenges/:id', async(req, res) => {
       { path: 'idUsersChallenge', select: 'id name' },
       { path: 'ruteChallenge', select: 'id name' }
     ]);
-    if (!challenge) {
+    if (challenge.length === 0) {
       res.status(404).send();
     } else {
       res.send(challenge);
@@ -156,7 +156,7 @@ challengesRouter.patch('/challenges', async(req, res) => {
           runValidators: true,
         });
         if (!challenge) {
-          return res.status(405).send();
+          return res.status(404).send();
         } else {
           if (req.body.idUsersChallenge) {
             for (const user of req.body.idUsersChallenge) {
@@ -220,7 +220,7 @@ challengesRouter.patch('/challenges/:id', async(req, res) => {
           runValidators: true,
         });
         if (!challenge) {
-          return res.status(405).send();
+          return res.status(404).send();
         } else {
           if (req.body.idUsersChallenge) {
             for (const user of req.body.idUsersChallenge) {

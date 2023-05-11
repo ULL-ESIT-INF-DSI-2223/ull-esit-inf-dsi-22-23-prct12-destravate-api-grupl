@@ -44,7 +44,7 @@ const GroupsSchema = new Schema<GroupsDocumentInterface>({
   },
   participants: {
     type: [Schema.Types.ObjectId],
-    ref: 'Users',
+    ref: 'User',
     required: true
   },
   stats: {
@@ -58,7 +58,7 @@ const GroupsSchema = new Schema<GroupsDocumentInterface>({
   favouriteRoutes: {
     type: [Schema.Types.ObjectId],
     required: true,
-    ref: 'Tracks'
+    ref: 'Track'
   },
   historicRoutes: [
     {
@@ -77,5 +77,5 @@ const GroupsSchema = new Schema<GroupsDocumentInterface>({
   ]
 });
 
-export const GroupsModel = model<GroupsDocumentInterface>('Groups', GroupsSchema);
+export const GroupsModel = model<GroupsDocumentInterface>('Group', GroupsSchema);
   

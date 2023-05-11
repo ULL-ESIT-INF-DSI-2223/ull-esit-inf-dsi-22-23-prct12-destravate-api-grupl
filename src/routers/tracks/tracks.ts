@@ -59,8 +59,10 @@ trackRouter.get('/tracks', async (req, res) => {
     const track = await Track.find(filter).populate(
       {path: 'users', select: ['name']} 
     );
-
-    return res.status(201).send(track);
+    if (track.length === 0) {
+      return res.status(404).send();
+    }
+    return res.status(200).send(track);
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -78,7 +80,7 @@ trackRouter.get('/tracks/:id', async (req, res) => {
     if (track.length === 0) {
       return res.status(404).send();
     }
-    return res.status(201).send(track);
+    return res.status(200).send(track);
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -124,7 +126,7 @@ trackRouter.patch('/tracks', async (req, res) => {
               await Users.findOneAndUpdate({_id: friend}, {$push: {favRoutes: track._id}});
             }
           }
-          return res.status(201).send(track);
+          return res.send(track);
         } catch (error) {
           return res.status(500).send(error);
         }
@@ -166,7 +168,7 @@ trackRouter.patch('/tracks', async (req, res) => {
               await Users.findOneAndUpdate({_id: user}, {$push: {favRoutes: track._id}});
             }
           }
-            return res.status(201).send(track);
+            return res.send(track);
       } catch (error) {
           return res.status(500).send(error);
       }

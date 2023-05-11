@@ -71,10 +71,15 @@ groupsRouter.get('/groups', async (req, res) => {
 
   try {
     const group = await GroupsModel.find(filter).populate([
-      {path: 'participants', select: 'id name'},
-      {path: 'favouriteRoutes', select: 'id name'}
+      {path: 'participants', select: 'name'},
+      {path: 'favouriteRoutes', select: 'name'}
       ]);
-    return res.status(201).send(group);
+    if(group.length === 0) {
+      return res.status(404).send(
+        {"error": "Group not found"}
+      );
+    }
+    return res.send(group);
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -83,14 +88,16 @@ groupsRouter.get('/groups', async (req, res) => {
 });
 
 groupsRouter.get('/groups/:id', async (req, res) => {
-  const filter = {id: Number(req.params.id)};
-  
+  const filter = req.params.id?{id: req.params.id}:{};
   try {
-    const group = await GroupsModel.find(filter).populate([
-      {path: 'participants', select: 'id name'},
-      {path: 'favouriteRoutes', select: 'id name'}
-      ]);
-    return res.status(201).send(group);
+    const group = await GroupsModel.find(filter).populate([{'path': 'participants', select: 'name'}, 
+    {'path': 'favouriteRoutes', select: 'name'}]);
+    if(group.length === 0) {
+      return res.status(404).send(
+        {"error": "Group not found"}
+      );
+    }
+    return res.send(group);
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -218,7 +225,6 @@ groupsRouter.patch('/groups', async (req, res) => {
 groupsRouter.delete('/groups', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
 
-
   try {
     const group_ = await GroupsModel.findOne(filter);
     if(!group_) {
@@ -230,7 +236,7 @@ groupsRouter.delete('/groups', async (req, res) => {
     };
 
     const group = await GroupsModel.findOneAndDelete(filter);
-    return res.status(201).send(group);
+    return res.send(group);
   } catch (error) {
      return res.status(500).send(error);
   }
@@ -252,7 +258,7 @@ groupsRouter.delete('/groups/:id', async (req, res) => {
     };
 
     const group = await GroupsModel.findOneAndDelete(filter);
-    return res.status(201).send(group);
+    return res.send(group);
   } catch (error) {
      return res.status(500).send(error);
   }

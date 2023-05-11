@@ -15,7 +15,18 @@ import { Document, Schema, model } from 'mongoose';
 import { UsersDocumentInterface } from './users.js';
 import { TrackDocumentInterface } from './tracks.js';
 
-
+/**
+ * Interface que define las propiedades que debe tener un documento de un reto
+ * @interface ChallengeDocumentInterface
+ * @extends Document
+ * @property {number} id - id del reto
+ * @property {string} name - nombre del reto
+ * @property {TrackDocumentInterface[]} ruteChallenge - ruta del reto
+ * @property {"bicicleta" | "correr"} typeActivitie - tipo de actividad del reto
+ * @property {number} kmTotal - km totales del reto
+ * @property {UsersDocumentInterface[]} idUsersChallenge - usuarios que participan en el reto
+ * 
+ */
 export interface ChallengeDocumentInterface extends Document {
   id: number;
   name: string;
@@ -26,6 +37,18 @@ export interface ChallengeDocumentInterface extends Document {
 
 }
 
+
+/**
+ * Esquema de un reto
+ * @const ChallengeSchema
+ * @type {Schema<ChallengeDocumentInterface>}
+ * @property {number} id - id del reto
+ * @property {string} name - nombre del reto
+ * @property {TrackDocumentInterface[]} ruteChallenge - ruta del reto
+ * @property {"bicicleta" | "correr"} typeActivitie - tipo de actividad del reto
+ * @property {number} kmTotal - km totales del reto
+ * @property {UsersDocumentInterface[]} idUsersChallenge - usuarios que participan en el reto
+ */
 const ChallengeSchema = new Schema<ChallengeDocumentInterface>({
 
   id: {

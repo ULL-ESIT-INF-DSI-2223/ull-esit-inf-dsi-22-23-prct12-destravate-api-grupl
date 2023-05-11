@@ -18,7 +18,22 @@ import { Users } from '../../models/users.js'
 export const trackRouter = express.Router();
 
 
-
+/**
+ * method to create a new track
+ * 
+ * 
+ * @param {string} name - name of the track
+ * @param {string} initialGeo - initial point of the track
+ * @param {string} finalGeo - final point of the track
+ * @param {number} kmLength - length of the track
+ * @param {number} avegLevel - average level of the track
+ * @param {array} users - users that have the track as a favourite
+ * @param {string} activityType - type of activity of the track
+ * @param {number} avegMark - average mark of the track
+ * 
+ * 
+ * 
+ */
 trackRouter.post('/tracks', async (req, res) => {
     
 
@@ -52,6 +67,24 @@ trackRouter.post('/tracks', async (req, res) => {
 
 });
 
+
+/**
+ * method to get all the tracks
+ * - if the query name is provided, it will return the track with that name
+ * - if the query id is provided, it will return the track with that id
+ * 
+ *
+ * @param {string} name - name of the track
+ * @param {string} initialGeo - initial point of the track
+ * @param {string} finalGeo - final point of the track
+ * @param {number} kmLength - length of the track
+ * @param {number} avegLevel - average level of the track
+ * @param {array} users - users that have the track as a favourite
+ * @param {string} activityType - type of activity of the track
+ * @param {number} avegMark - average mark of the track
+ * 
+ */
+
 trackRouter.get('/tracks', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
 
@@ -70,6 +103,23 @@ trackRouter.get('/tracks', async (req, res) => {
 
 });
 
+
+/**
+ * method to get all the tracks
+ * - if the query name is provided, it will return the track with that name
+ * - if the query id is provided, it will return the track with that id
+ * 
+ *
+ * @param {string} name - name of the track
+ * @param {string} initialGeo - initial point of the track
+ * @param {string} finalGeo - final point of the track
+ * @param {number} kmLength - length of the track
+ * @param {number} avegLevel - average level of the track
+ * @param {array} users - users that have the track as a favourite
+ * @param {string} activityType - type of activity of the track
+ * @param {number} avegMark - average mark of the track
+ * 
+ */
 trackRouter.get('/tracks/:id', async (req, res) => {
   const filter = {id: Number(req.params.id)};
   
@@ -88,6 +138,23 @@ trackRouter.get('/tracks/:id', async (req, res) => {
 
 });
 
+
+/** 
+ * method to update a track
+ * - if the query name is provided, it will update the track with that name
+ * - if the query id is provided, it will update the track with that id
+ * 
+ * 
+ * @param {string} name - name of the track
+ * @param {string} initialGeo - initial point of the track
+ * @param {string} finalGeo - final point of the track
+ * @param {number} kmLength - length of the track
+ * @param {number} avegLevel - average level of the track
+ * @param {array} users - users that have the track as a favourite
+ * @param {string} activityType - type of activity of the track
+ * @param {number} avegMark - average mark of the track
+ * 
+ */
 trackRouter.patch('/tracks', async (req, res) => {
   if (!req.query.name) {
     return res.status(400).send({error: "No name provided"});
@@ -134,6 +201,22 @@ trackRouter.patch('/tracks', async (req, res) => {
     }
   });
 
+  /** 
+ * method to update a track
+ * - if the query name is provided, it will update the track with that name
+ * - if the query id is provided, it will update the track with that id
+ * 
+ * 
+ * @param {string} name - name of the track
+ * @param {string} initialGeo - initial point of the track
+ * @param {string} finalGeo - final point of the track
+ * @param {number} kmLength - length of the track
+ * @param {number} avegLevel - average level of the track
+ * @param {array} users - users that have the track as a favourite
+ * @param {string} activityType - type of activity of the track
+ * @param {number} avegMark - average mark of the track
+ * 
+ */
   trackRouter.patch('/tracks/:id', async (req, res) => {
     const allowedUpdates = ['id', 'name', 'initialGeo', 'finalGeo', 'kmLength', 'avegLevel', 'users', 'activityType', 'avegMark'];
     const actualUpdates = Object.keys(req.body);
@@ -176,6 +259,21 @@ trackRouter.patch('/tracks', async (req, res) => {
 
   });
   
+  /**
+   * method to delete a track
+   * - if the query name is provided, it will delete the track with that name
+   * - if the query id is provided, it will delete the track with that id
+   * 
+   * @param {string} name - name of the track
+   * @param {string} initialGeo - initial point of the track
+   * @param {string} finalGeo - final point of the track
+   * @param {number} kmLength - length of the track
+   * @param {number} avegLevel - average level of the track
+   * @param {array} users - users that have the track as a favourite
+   * @param {string} activityType - type of activity of the track
+   * @param {number} avegMark - average mark of the track
+   * 
+   */
 trackRouter.delete('/tracks', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
 
@@ -198,6 +296,22 @@ trackRouter.delete('/tracks', async (req, res) => {
 
 });
 
+
+  /**
+   * method to delete a track
+   * - if the query name is provided, it will delete the track with that name
+   * - if the query id is provided, it will delete the track with that id
+   * 
+   * @param {string} name - name of the track
+   * @param {string} initialGeo - initial point of the track
+   * @param {string} finalGeo - final point of the track
+   * @param {number} kmLength - length of the track
+   * @param {number} avegLevel - average level of the track
+   * @param {array} users - users that have the track as a favourite
+   * @param {string} activityType - type of activity of the track
+   * @param {number} avegMark - average mark of the track
+   * 
+   */
 trackRouter.delete('/tracks/:id', async (req, res) => {
 
   const filter = req.params.id?{id: req.params.id}:{};

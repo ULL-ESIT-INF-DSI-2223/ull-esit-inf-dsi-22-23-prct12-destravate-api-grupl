@@ -16,11 +16,24 @@ import { GroupsDocumentInterface } from './groups.js';
 import { TrackDocumentInterface } from './tracks.js';
 import { ChallengeDocumentInterface } from './challenges.js';
 
-export type stats = [[number, number], [number, number], [number, number]];
-export type historic = [string, number[]];
-export type Actividad = "bicicleta" | "correr";
 
-
+/**
+ * Interface que define las propiedades que debe tener un documento de la colección Users
+ * @interface UsersDocumentInterface
+ * @extends Document
+ * @property {number} id - Identificador único del usuario
+ * @property {string} name - Nombre del usuario
+ * @property {"bicicleta" | "correr"} activities - Actividad principal del usuario
+ * @property {UsersDocumentInterface[]} friends - Lista de amigos del usuario
+ * @property {GroupsDocumentInterface[]} groups - Lista de grupos del usuario
+ *  @property {[[number, number], [number, number], [number, number]]} stats - Estadísticas del usuario
+ * @property {TrackDocumentInterface[]} favRoutes - Lista de rutas favoritas del usuario
+ * @property {ChallengeDocumentInterface[]} activeChallenges - Lista de retos activos del usuario
+ * @property {[[string, string]]} historicRoutes - Lista de rutas históricas del usuario
+ * @property {string} date - Fecha de la ruta histórica
+ * @property {string[]} route - Ruta histórica
+ * 
+ */
 export interface UsersDocumentInterface extends Document {
 
   id: number;
@@ -36,11 +49,26 @@ export interface UsersDocumentInterface extends Document {
       date: string,
       route: [string]
     }
-  ]
-
-
+  ];
 }
 
+/**
+ * Esquema de la colección Users
+ * @const UsersSchema
+ * @type {Schema<UsersDocumentInterface>}
+ * @property {number} id - Identificador único del usuario
+ * @property {string} name - Nombre del usuario
+ * @property {"bicicleta" | "correr"} activities - Actividad principal del usuario
+ * @property {UsersDocumentInterface[]} friends - Lista de amigos del usuario
+ * @property {GroupsDocumentInterface[]} groups - Lista de grupos del usuario
+ * @property {[[number, number], [number, number], [number, number]]} stats - Estadísticas del usuario
+ * @property {TrackDocumentInterface[]} favRoutes - Lista de rutas favoritas del usuario
+ * @property {ChallengeDocumentInterface[]} activeChallenges - Lista de retos activos del usuario
+ * @property {[[string, string]]} historicRoutes - Lista de rutas históricas del usuario
+ * @property {string} date - Fecha de la ruta histórica
+ * @property {string[]} route - Ruta histórica
+ *
+ */
 const UsersSchema = new Schema<UsersDocumentInterface>({
 
   id: { 

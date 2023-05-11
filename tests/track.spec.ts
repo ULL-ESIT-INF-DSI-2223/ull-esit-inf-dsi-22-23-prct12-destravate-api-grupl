@@ -6,6 +6,7 @@ import { GroupsModel } from '../src/models/groups.js';
 import { expect } from 'chai';
 import { Challenges } from '../src/models/challenges.js';
 
+describe('Tracks', () => {
   const track = {
     id: 1,
     name: "track1",
@@ -25,11 +26,22 @@ import { Challenges } from '../src/models/challenges.js';
     finalGeo: [0.1,0],
     kmLength: 1000,
     avegLevel: 99,
-    users: [],
+    users: [1],
     activityType: "correr",
     avegMark: 10
   }
 
+  const track3 = {
+    id: 3,
+    name: "track3",
+    initialGeo: [0,0.2],
+    finalGeo: [0.1,0],
+    kmLength: 1000,
+    avegLevel: 99,
+    users: [100],
+    activityType: "correr",
+    avegMark: 10
+  }
 
   const user = {
     id: 1,
@@ -42,11 +54,13 @@ import { Challenges } from '../src/models/challenges.js';
     activeChallenges: []
   }
 
-  await Users.deleteMany();
-  await Track.deleteMany();
-  await GroupsModel.deleteMany();
-  await Challenges.deleteMany();
-
+  before(async () => {
+    await Users.deleteMany();
+    await Track.deleteMany();
+    await GroupsModel.deleteMany();
+    await Challenges.deleteMany();
+    await new Users(user).save();
+  });
 
 
   describe('POST /tracks', () => {
@@ -58,6 +72,10 @@ import { Challenges } from '../src/models/challenges.js';
       await request(app).post('/tracks').send(track2).expect(201);
     });
 
+    it('Should fail to create a new track3 with non existig user', async () => {
+      await request(app).post('/tracks').send(track3).expect(404);
+    });
+    
     it('Should fail to create a new track', async () => {
       await request(app).post('/tracks').send(track).expect(500);
     });
@@ -80,6 +98,12 @@ import { Challenges } from '../src/models/challenges.js';
     it('Should fail to get track 4', async () => {
       await request(app).get('/tracks?name=track4').expect(404);
     });
+    it('Server should fail because the id is not a number ', async () => {
+      await request(app).get('/tracks/ñ').expect(500);
+    });
+    // it('Should fail to get track 3', async () => {
+    //   await request(app).get('/tracks?name=track4~').expect(500);
+    // });
   });
 
   describe('PATCH /tracks', () => {
@@ -95,6 +119,21 @@ import { Challenges } from '../src/models/challenges.js';
     it ('Should fail to update track 4', async () => {
       await request(app).patch('/tracks?name=track4').send({name: "track400"}).expect(404);
     });
+    it ('Should fail to update without name', async () => {
+      await request(app).patch('/tracks').send({name: "track400"}).expect(400);
+    });
+    it ('Should fail to update an atribute that not exist', async () => {
+      await request(app).patch('/tracks').send({USERname: "track400"}).expect(400);
+    });
+    it ('Should fail to update without name', async () => {
+      await request(app).patch('/tracks').send({users: [1001]}).expect(400);
+    });
+    it ('Should successfully update track100 to add a user', async () => {
+      await request(app).patch('/tracks?name=track100').send({users: [1]}).expect(200);
+    });
+
+    
+
   });
 
   describe('DELETE /tracks', () => {
@@ -111,7 +150,7 @@ import { Challenges } from '../src/models/challenges.js';
       await request(app).delete('/tracks?name=track4').expect(404);
     });
   });
-
+});
 
 
 

@@ -20,6 +20,24 @@ import { Track } from '../../models/tracks.js';
 
 export const challengesRouter = express.Router();
 
+
+/**
+ * Method to create a new challenge in the database
+ *  - Check if the users and routes exist
+ *  - Create the challenge
+ *  - Add the challenge to the users and routes
+ *  - Return the challenge created
+ *  - Return an error if the users or routes don't exist
+ *  - Return an error if the challenge already exists
+ *  - Return an error if the challenge is not created
+ *  - Return an error if the challenge is not saved
+ *  - Return an error if the challenge is not added to the users and routes
+ *  - Return an error if the challenge is not returned
+ * 
+ * @param req
+ * @param res
+ * 
+ */
 challengesRouter.post('/challenges', async (req, res) => {
 
   try {
@@ -70,6 +88,18 @@ challengesRouter.post('/challenges', async (req, res) => {
   
 });
 
+
+/**
+ * Method to get all the challenges in the database
+ * - Return all the challenges
+ * - Return an error if the challenges are not found
+ * - Return an error if the challenges are not returned
+ * 
+ * @param req
+ * @param res
+ * 
+ * 
+ */
 challengesRouter.get('/challenges', async(req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
   try{
@@ -88,6 +118,17 @@ challengesRouter.get('/challenges', async(req, res) => {
   }
 });
 
+
+/**
+ * Method to get a challenge by id in the database
+ * - Return the challenge
+ * - Return an error if the challenge is not found
+ * - Return an error if the challenge is not returned
+ * 
+ * @param req
+ * @param res
+ * 
+ */
 challengesRouter.get('/challenges/:id', async(req, res) => {
   const filter = req.params.id?{id: Number(req.params.id)}:{};
   try {
@@ -106,7 +147,23 @@ challengesRouter.get('/challenges/:id', async(req, res) => {
   }
 });
 
-
+/**
+ * Method to UPDATE a challenge by id in the database
+ * - Check if the users and routes exist
+ * - Update the challenge
+ * - Add the challenge to the users and routes
+ * - Return the challenge updated
+ * - Return an error if the users or routes don't exist
+ * - Return an error if the challenge is not found
+ * - Return an error if the challenge is not updated
+ * - Return an error if the challenge is not saved
+ * - Return an error if the challenge is not added to the users and routes
+ * - Return an error if the challenge is not returned
+ * 
+ * @param req
+ * @param res
+ * 
+ */
 challengesRouter.patch('/challenges', async(req, res) => {
 
 
@@ -177,6 +234,24 @@ challengesRouter.patch('/challenges', async(req, res) => {
   } 
 });     
 
+
+/**
+ * Method to update a challenge by id in the database
+ * - Check if the users and routes exist
+ * - Update the challenge
+ * - Add the challenge to the users and routes
+ * - Return the challenge updated
+ * - Return an error if the users or routes don't exist
+ * - Return an error if the challenge is not found
+ * - Return an error if the challenge is not updated
+ * - Return an error if the challenge is not saved
+ * - Return an error if the challenge is not added to the users and routes
+ * - Return an error if the challenge is not returned
+ * 
+ * @param req
+ * @param res
+ * 
+ */
 challengesRouter.patch('/challenges/:id', async(req, res) => {
 
 
@@ -241,6 +316,20 @@ challengesRouter.patch('/challenges/:id', async(req, res) => {
   } 
 });     
 
+/**
+ * Method to delete a challenge by name in the database
+ * - Find the challenge by name
+ * - Delete the challenge
+ * - Delete the challenge from the users
+ * - Return the challenge deleted
+ * - Return an error if the challenge is not found
+ * - Return an error if the challenge is not deleted
+ * - Return an error if the challenge is not returned
+ *  
+ * @param req
+ * @param res
+ * 
+ */
 challengesRouter.delete('/challenges', async(req, res) => {
 
 
@@ -270,6 +359,21 @@ challengesRouter.delete('/challenges', async(req, res) => {
 
 });
 
+
+/**
+ * Method to delete a challenge by id in the database
+ * 
+ * - Find the challenge by id 
+ * - Delete the challenge
+ * - Delete the challenge from the users
+ * - Return the challenge deleted
+ * - Return an error if the challenge is not found
+ * - Return an error if the challenge is not deleted
+ * - Return an error if the challenge is not returned
+ * 
+ * @param req
+ * @param res
+ */
 challengesRouter.delete('/challenges/:id', async(req, res) => {
 
 

@@ -19,6 +19,30 @@ import { Challenges } from '../../models/challenges.js';
 
 export const usersRouter = express.Router();
 
+
+/**
+ * method to post a new user
+ * @param {string} name - name of the user
+ * @param {number} id - id of the user
+ * @param {string} activities - activities of the user
+ * @param {array} friends - friends of the user
+ * @param {array} groups - groups of the user
+ * @param {array} stats - stats of the user
+ * @param {array} favRoutes - favourite routes of the user
+ * @param {array} activeChallenges - active challenges of the user
+ * @returns {object} - the user created
+ * @throws {error} - if the user already exists
+ * @throws {error} - if the friends of the user don't exist
+ * @throws {error} - if the groups of the user don't exist
+ * @throws {error} - if the favourite routes of the user don't exist
+ * @throws {error} - if the challenges of the user don't exist
+ * @throws {error} - if the user can't be saved
+ * @throws {error} - if the user can't be added to the friends
+ * @throws {error} - if the user can't be added to the groups
+ * @throws {error} - if the user can't be added to the favourite routes
+ * @throws {error} - if the user can't be added to the challenges
+ * 
+ */
 usersRouter.post('/users', async (req, res) => {
 
   try {
@@ -122,6 +146,21 @@ usersRouter.post('/users', async (req, res) => {
   }
 });
 
+/**
+ * method to get all users
+ * @param {string} name - name of the user
+ * @param {number} id - id of the user
+ * @param {string} activities - activities of the user
+ * @param {array} friends - friends of the user
+ * @param {array} groups - groups of the user
+ * @param {array} stats - stats of the user
+ * @param {array} favRoutes - favourite routes of the user
+ * @param {array} activeChallenges - active challenges of the user
+ * @returns {array} - all users
+ * @throws {error} - if the users can't be found
+ * 
+ * 
+ */
 usersRouter.get('/users', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
   try{
@@ -142,7 +181,21 @@ usersRouter.get('/users', async (req, res) => {
   }
 });
 
-
+/**
+ * method to get all users
+ * @param {string} name - name of the user
+ * @param {number} id - id of the user
+ * @param {string} activities - activities of the user
+ * @param {array} friends - friends of the user
+ * @param {array} groups - groups of the user
+ * @param {array} stats - stats of the user
+ * @param {array} favRoutes - favourite routes of the user
+ * @param {array} activeChallenges - active challenges of the user
+ * @returns {array} - all users
+ * @throws {error} - if the users can't be found
+ * 
+ * 
+ */
 usersRouter.get('/users/:id', async(req, res) => {
   const filter = req.params.id?{id: Number(req.params.id)}:{};
 
@@ -165,7 +218,19 @@ usersRouter.get('/users/:id', async(req, res) => {
 });
 
 
-
+/**
+ * method to update a user
+ * @param {string} name - name of the user
+ * @param {number} id - id of the user
+ * @param {string} activities - activities of the user
+ * @param {array} friends - friends of the user
+ * @param {array} groups - groups of the user
+ * @param {array} stats - stats of the user
+ * @param {array} favRoutes - favourite routes of the user
+ * @param {array} activeChallenges - active challenges of the user
+ * @returns {array} - all users
+ * @throws {error} - if the users can't be found
+ */
 usersRouter.patch('/users', async(req, res) => {
 
 
@@ -287,6 +352,19 @@ usersRouter.patch('/users', async(req, res) => {
   }
 });    
 
+/**
+ * method to update a user
+ * @param {string} name - name of the user
+ * @param {number} id - id of the user
+ * @param {string} activities - activities of the user
+ * @param {array} friends - friends of the user
+ * @param {array} groups - groups of the user
+ * @param {array} stats - stats of the user
+ * @param {array} favRoutes - favourite routes of the user
+ * @param {array} activeChallenges - active challenges of the user
+ * @returns {array} - all users
+ * @throws {error} - if the users can't be found
+ */
 usersRouter.patch('/users/:id', async(req, res) => {
 
 
@@ -408,6 +486,18 @@ usersRouter.patch('/users/:id', async(req, res) => {
   }
 });    
 
+/**
+ * method to delete a user
+ * @param {string} name - name of the user
+ * @param {number} id - id of the user
+ * @param {string} activities - activities of the user
+ * @param {array} friends - friends of the user
+ * @param {array} groups - groups of the user
+ * @param {array} stats - stats of the user
+ * @param {array} favRoutes - favourite routes of the user
+ * @param {array} activeChallenges - active challenges of the user
+ * @returns {array} - all users
+ */
 usersRouter.delete('/users/', async(req, res) => {
 
   const filter = req.query.name?{name: req.query.name.toString()}:{};
@@ -449,7 +539,18 @@ usersRouter.delete('/users/', async(req, res) => {
   }
 });
 
-
+/**
+ * method to delete a user
+ * @param {string} name - name of the user
+ * @param {number} id - id of the user
+ * @param {string} activities - activities of the user
+ * @param {array} friends - friends of the user
+ * @param {array} groups - groups of the user
+ * @param {array} stats - stats of the user
+ * @param {array} favRoutes - favourite routes of the user
+ * @param {array} activeChallenges - active challenges of the user
+ * @returns {array} - all users
+ */
 usersRouter.delete('/users/:id', async(req, res) => {
 
   const filter = req.params.id?{id: req.params.id}:{};

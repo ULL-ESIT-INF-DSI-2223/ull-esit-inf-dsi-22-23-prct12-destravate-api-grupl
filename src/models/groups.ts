@@ -15,7 +15,20 @@ import {Document, Schema, model } from 'mongoose';
 import {UsersDocumentInterface} from './users.js';
 import { TrackDocumentInterface } from './tracks.js';
 
-
+/**
+ * Interface que define las propiedades que debe tener un documento de la colección Groups
+ * @interface GroupsDocumentInterface
+ * @extends Document
+ * @property {number} id - Identificador del grupo
+ * @property {string} name - Nombre del grupo
+ * @property {UsersDocumentInterface[]} participants - Array de usuarios que pertenecen al grupo
+ * @property {[[number, number], [number, number], [number, number]]} stats - Estadísticas del grupo
+ * @property {number[]} ranking - Ranking del grupo
+ * @property {TrackDocumentInterface[]} favouriteRoutes - Rutas favoritas del grupo
+ * @property {[[string, string, string]]} historicRoutes - Rutas históricas del grupo
+ * @property {string} date - Fecha de la ruta
+ * @property {string} route - Ruta
+ */
 export interface GroupsDocumentInterface extends Document {
   id: number;
   name: string;
@@ -31,6 +44,20 @@ export interface GroupsDocumentInterface extends Document {
   ]
 }
 
+/**
+ * Esquema de la colección Groups
+ * @const GroupsSchema
+ * @type {Schema<GroupsDocumentInterface>}
+ * @property {number} id - Identificador del grupo
+ * @property {string} name - Nombre del grupo
+ * @property {UsersDocumentInterface[]} participants - Array de usuarios que pertenecen al grupo
+ * @property {[[number, number], [number, number], [number, number]]} stats - Estadísticas del grupo
+ * @property {number[]} ranking - Ranking del grupo
+ * @property {TrackDocumentInterface[]} favouriteRoutes - Rutas favoritas del grupo
+ * @property {[[string, string, string]]} historicRoutes - Rutas históricas del grupo
+ * @property {string} date - Fecha de la ruta
+ * @property {string} route - Ruta
+  */
 const GroupsSchema = new Schema<GroupsDocumentInterface>({
   id: {
     type: Number,

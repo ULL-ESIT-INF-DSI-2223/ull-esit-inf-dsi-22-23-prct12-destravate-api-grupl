@@ -1,7 +1,10 @@
 {
   "entryPoints": [
-    "./src/pe102/*.ts", 
-      
+    "./src/models/*.ts", 
+    "./src/routers/challenges/*.ts", 
+    "./src/routers/groups/*.ts", 
+    "./src/routers/tracks/*.ts", 
+    "./src/routers/users/*.ts", 
     "./src/*.ts" 
 
     

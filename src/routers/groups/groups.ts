@@ -18,7 +18,26 @@ import { Track } from '../../models/tracks.js';
 
 export const groupsRouter = express.Router();
 
-
+/** 
+ * 
+ * method to post a new group in the database 
+ * - Check if the users exist
+ * - Check if the routes exist
+ * - Create the group
+ * - Add the group to the users
+ *
+ * 
+ * 
+ * @param {string} name - Nombre del grupo
+ * @param {string} participants - ID de los usuarios que pertenecen al grupo
+ * @param {string} stats - Estadísticas del grupo
+ * @param {string} ranking - Ranking del grupo
+ * @param {string} favouriteRoutes - Rutas favoritas del grupo
+ * @param {string} routesHistory - Historial de rutas del grupo
+ * @returns {object} - Grupo creado
+ * 
+ * 
+ */
 groupsRouter.post('/groups', async (req, res) => {
   
   try {
@@ -66,6 +85,22 @@ groupsRouter.post('/groups', async (req, res) => {
 
 });
 
+/**
+ * 
+ * method to get all the groups in the database
+ * - Check if the group exists
+ * - Return the group
+ * 
+ * 
+ * @param {string} name - Nombre del grupo
+ * @param {string} participants - ID de los usuarios que pertenecen al grupo
+ * @param {string} stats - Estadísticas del grupo
+ * @param {string} ranking - Ranking del grupo
+ * @param {string} favouriteRoutes - Rutas favoritas del grupo
+ * @param {string} routesHistory - Historial de rutas del grupo
+ * @returns {object} - Grupos
+ * 
+ */
 groupsRouter.get('/groups', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
 
@@ -87,6 +122,22 @@ groupsRouter.get('/groups', async (req, res) => {
 
 });
 
+/**
+ * 
+ * method to get all the groups in the database
+ * - Check if the group exists
+ * - Return the group
+ * 
+ * 
+ * @param {string} name - Nombre del grupo
+ * @param {string} participants - ID de los usuarios que pertenecen al grupo
+ * @param {string} stats - Estadísticas del grupo
+ * @param {string} ranking - Ranking del grupo
+ * @param {string} favouriteRoutes - Rutas favoritas del grupo
+ * @param {string} routesHistory - Historial de rutas del grupo
+ * @returns {object} - Grupos
+ * 
+ */
 groupsRouter.get('/groups/:id', async (req, res) => {
   const filter = req.params.id?{id: req.params.id}:{};
   try {
@@ -104,6 +155,17 @@ groupsRouter.get('/groups/:id', async (req, res) => {
 
 });
 
+
+/**
+ * method to update a group in the database
+ * - Check if the group exists
+ * - Check if the users exist
+ * - Check if the routes exist
+ * - Update the group
+ * - Update the users
+ * 
+ * 
+ */
 groupsRouter.patch('/groups', async (req, res) => {
   if (!req.query.name) {
     return res.status(400).send({error: "No name provided"});
@@ -155,7 +217,7 @@ groupsRouter.patch('/groups', async (req, res) => {
               await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group._id } });
             }
           }
-          return res.status(201).send(group);
+          return res.send(group);
         } catch (error) {
           return res.status(500).send(error);
         }
@@ -163,6 +225,16 @@ groupsRouter.patch('/groups', async (req, res) => {
     }
   });
 
+  /**
+ * method to update a group in the database
+ * - Check if the group exists
+ * - Check if the users exist
+ * - Check if the routes exist
+ * - Update the group
+ * - Update the users
+ * 
+ * 
+ */
   groupsRouter.patch('/groups/:id', async (req, res) => {
     if (!req.params.id) {
       return res.status(400).send({error: "No id provided"});
@@ -215,13 +287,22 @@ groupsRouter.patch('/groups', async (req, res) => {
                 await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group._id } });
               }
             }
-            return res.status(201).send(group);
+            return res.send(group);
           } catch (error) {
             return res.status(500).send(error);
           }
         }
       }
     });
+
+/**
+ * method to delete a group in the database
+ * - Check if the group exists
+ * - Delete the group
+ * - Delete the group from the users
+ * 
+ * 
+ */
 groupsRouter.delete('/groups', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
 
@@ -243,6 +324,13 @@ groupsRouter.delete('/groups', async (req, res) => {
 
 });
 
+/**
+ * method to delete a group in the database
+ * - Check if the group exists
+ * - Delete the group
+ * - Delete the group from the users
+ * 
+ */
 groupsRouter.delete('/groups/:id', async (req, res) => {
 
 

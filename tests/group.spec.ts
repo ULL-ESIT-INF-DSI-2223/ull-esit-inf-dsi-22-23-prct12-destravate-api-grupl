@@ -6,6 +6,7 @@ import { expect } from 'chai';
 await GroupsModel.deleteMany();
 
 
+
 const group1 = {
   id: 1,
   name: "grupo1",

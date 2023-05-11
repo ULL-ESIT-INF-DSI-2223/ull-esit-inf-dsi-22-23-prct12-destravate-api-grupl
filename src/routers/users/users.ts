@@ -174,7 +174,7 @@ usersRouter.patch('/users', async(req, res) => {
       error: 'A name must be provided',
     });
   } else {
-    const allowedUpdates = ['id', 'name', 'activities', 'friends', 'groups', 'stats', 'favRoutes', 'challenges', 'historic'];
+    const allowedUpdates = ['id', 'name', 'activities', 'friends', 'groups', 'stats', 'favRoutes', 'activeChallenges', 'historic'];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate =
     actualUpdates.every((update) => allowedUpdates.includes(update));
@@ -230,9 +230,9 @@ usersRouter.patch('/users', async(req, res) => {
         req.body.favRoutes = arrayRoutes;
       }
 
-      if(req.body.challenges){
+      if(req.body.activeChallenges){
         const arrayChallenges = [];
-        for (const challenge_ of req.body.challenges) {
+        for (const challenge_ of req.body.activeChallenges) {
           const challenge = await Challenges.findOne({id: challenge_});
           if (!challenge) {
             return res.status(404).send({
@@ -242,7 +242,7 @@ usersRouter.patch('/users', async(req, res) => {
           }
           arrayChallenges.push(challenge._id);
         }
-        req.body.challenges = arrayChallenges;
+        req.body.activeChallenges = arrayChallenges;
       }   
       try{
         const user = await Users.findOneAndUpdate({name: req.query.name.toString()}, req.body, {
@@ -295,7 +295,7 @@ usersRouter.patch('/users/:id', async(req, res) => {
       error: 'A name must be provided',
     });
   } else {
-    const allowedUpdates = ['id', 'name', 'activities', 'friends', 'groups', 'stats', 'favRoutes', 'challenges', 'historic'];
+    const allowedUpdates = ['id', 'name', 'activities', 'friends', 'groups', 'stats', 'favRoutes', 'activeChallenges', 'historic'];
     const actualUpdates = Object.keys(req.body);
     const isValidUpdate =
     actualUpdates.every((update) => allowedUpdates.includes(update));
@@ -351,9 +351,9 @@ usersRouter.patch('/users/:id', async(req, res) => {
         req.body.favRoutes = arrayRoutes;
       }
 
-      if(req.body.challenges){
+      if(req.body.activeChallenges){
         const arrayChallenges = [];
-        for (const challenge_ of req.body.challenges) {
+        for (const challenge_ of req.body.activeChallenges) {
           const challenge = await Challenges.findOne({id: challenge_});
           if (!challenge) {
             return res.status(404).send({
@@ -363,7 +363,7 @@ usersRouter.patch('/users/:id', async(req, res) => {
           }
           arrayChallenges.push(challenge._id);
         }
-        req.body.challenges = arrayChallenges;
+        req.body.activeChallenges = arrayChallenges;
       }   
       try{
         const user = await Users.findOneAndUpdate({id: req.params.id}, req.body, {
@@ -379,20 +379,20 @@ usersRouter.patch('/users/:id', async(req, res) => {
               await Users.findOneAndUpdate({_id: friend}, {$push: {friends: user._id}});
             }
           }
-          if (req.body.friends){
+          if (req.body.groups){
             // Añadir el usuario de los grupos
             for (const group of user.groups) {
               await GroupsModel.findOneAndUpdate({_id: group}, {$push: {participants: user._id}});
             }
           }
 
-          if (req.body.groups){
+          if (req.body.favRoutes){
             // Añadir de las rutas favoritas
             for (const route of user.favRoutes) {
               await Track.findOneAndUpdate({_id: route}, {$push: {users: user._id}});
             }
           }
-          if(req.body.favRoutes){
+          if(req.body.activeChallenges){
             // Añadir de los retos activos
             for (const challenge of user.activeChallenges) {
               await Challenges.findOneAndUpdate({_id: challenge}, {$push: {idUsersChallenge: user._id}});

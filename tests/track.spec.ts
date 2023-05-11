@@ -2,7 +2,9 @@ import request from 'supertest';
 import { app } from '../src/app.js';
 import { Track } from '../src/models/tracks.js';
 import { Users } from '../src/models/users.js';
+import { GroupsModel } from '../src/models/groups.js';
 import { expect } from 'chai';
+import { Challenges } from '../src/models/challenges.js';
 
   const track = {
     id: 1,
@@ -40,9 +42,11 @@ import { expect } from 'chai';
     activeChallenges: []
   }
 
-
   await Users.deleteMany();
   await Track.deleteMany();
+  await GroupsModel.deleteMany();
+  await Challenges.deleteMany();
+
 
 
   describe('POST /tracks', () => {

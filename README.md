@@ -942,11 +942,32 @@ En esta sección se describen las relaciones entre los distintos objetos de la a
 
 En primer lugar, los Usuarios pueden tener amigos, participar en grupos, tener rutas favoritas y retos activos, por tanto se establecen las siguientes relaciones:
 
-- Al añadir un usuario, debe comprobarse que los amigos que se le añaden existen en la base de datos, y en caso contrario, se debe devolver un error.
+- Al añadir un usuario, debe comprobarse que los amigos que se le añaden existen en la base de datos, y en caso contrario, se debe devolver un error. Además, se debe añadir el usuario a la lista de amigos de los usuarios que se le añaden.
 - Al añadir un usuario, debe comprobarse que los grupos en los que participa existen en la base de datos, y en caso contrario, se debe devolver un error.
 - Al añadir un usuario, debe comprobarse que las rutas favoritas existen en la base de datos, y en caso contrario, se debe devolver un error.
 - Al actualizar un usuario, se deben realizar las mismas comprobaciones que en el caso anterior.
 - Al eliminar un usuario, se deben eliminar todas las referencias a este en los grupos, rutas favoritas y retos activos.
+
+```ts 
+export interface UsersDocumentInterface extends Document {
+
+  id: number;
+  name: string; 
+  activities: "bicicleta" | "correr";
+  friends: UsersDocumentInterface[];
+  groups: GroupsDocumentInterface[];
+  stats: [[number, number], [number, number], [number, number]];
+  favRoutes: TrackDocumentInterface[];
+  activeChallenges: ChallengeDocumentInterface[];
+  historicRoutes: [
+    {
+      date: string,
+      route: [string]
+    }
+  ];
+}
+```
+
 
 Para hacer todo lo anterior cabe resaltar el uso de los operadores `$push` y `$pull` de Mongoose, que permiten añadir y eliminar elementos de un array respectivamente. Por ejemplo, a continuación un fragmento de código del patch donde se actualizan también las rutas, grupos y retos:
 
@@ -977,9 +998,76 @@ Para hacer todo lo anterior cabe resaltar el uso de los operadores `$push` y `$p
           }
 ```
 
+En segundo lugar, los grupos pueden tener participante y rutas favoritas, por tanto se establece la siguiente relación:
+
+- Al añadir un grupo, debe comprobarse que los participantes que se le añaden existen en la base de datos, y en caso contrario, se debe devolver un error.
+- Al añadir un grupo, debe comprobarse que las rutas favoritas existen en la base de datos, y en caso contrario, se debe devolver un error.
+- Al actualizar un grupo, en caso de añadir un usuario al grupo, debe realizarse por un lado la comprobación de que esos nuevos usuarios existen, y por otro lado, añadir el grupo a la lista de grupos de los usuarios.
+- Al eliminar un grupo, se debe eliminar el citado grupo de la lista de grupos de los usuarios que participan en él.
+
+```ts
+export interface GroupsDocumentInterface extends Document {
+  id: number;
+  name: string;
+  participants: UsersDocumentInterface[];
+  stats: [[number, number], [number, number], [number, number]];
+  ranking: number[];
+  favouriteRoutes: TrackDocumentInterface[];
+  historicRoutes: [
+    {
+      date: string,
+      route: [string]
+    }
+  ]
+}
+```
+
+En tercer lugar, en cuanto a las rutas, estas pueden tener usuarios que las frecuentan, por tanto se establece la siguiente relación:
+
+- Al añadir una ruta, debe comprobarse que los usuarios que la frecuentan existen en la base de datos, y en caso contrario, se debe devolver un error. Además, se debe añadir la ruta a la lista de rutas favoritas de los usuarios que la frecuentan.
+- Al actualizar una ruta, se deben realizar las mismas comprobaciones que en el caso anterior.
+- Al eliminar una ruta, se deben eliminar todas las referencias a esta en los usuarios que la frecuentan.
+
+```ts
+export interface TrackDocumentInterface extends Document {
+  id: number;
+  name: string;
+  initialGeo: GeoLocalization;
+  finalGeo: GeoLocalization;
+  kmLength: number;
+  avegLevel: number;
+  users: UsersDocumentInterface[];
+  activityType: Actividad;
+  avegMark: number;
+}
+```
+
+En cuarto lugar, los retos pueden tener usuarios que los tienen activos, por tanto se establece la siguiente relación:
+
+- Al añadir un reto, debe comprobarse que los usuarios que lo tienen activo existen en la base de datos, y en caso contrario, se debe devolver un error. Además, se debe añadir el reto a la lista de retos activos de los usuarios que lo tienen activo.
+- Al actualizar un reto, se deben realizar las mismas comprobaciones que en el caso anterior.
+- Al eliminar un reto, se deben eliminar todas las referencias a este en los usuarios que lo tienen activo.
+
+```ts
+export interface ChallengeDocumentInterface extends Document {
+  id: number;
+  name: string;
+  ruteChallenge: TrackDocumentInterface[];
+  typeActivitie: "bicicleta" | "correr";
+  kmTotal: number;
+  idUsersChallenge: UsersDocumentInterface[];
+
+}
+```
 
 ## Conclusión
 
 A modo de conclusión, una vez llevado a cabo todo el desarrollo descrito previamente y con las correspondientes herramientas, hemos obtenido una API REST funcional, que permite realizar las operaciones CRUD sobre los distintos objetos de la aplicación Destravate, y que además se encuentra desplegada en la nube, concretamente en Atlas MongoDB.
 
+Desde nuestro punto de vista este proyecto aunque si bien tiene complejidad, ha sido muy interesante, puesto que nos ha permitido poner en práctica los conocimientos adquiridos en la asignatura de Desarrollo de Sistemas Informáticos, y además nos ha permitido aprender nuevas tecnologías como son MongoDB y Mongoose. Y además de permitirnos ver nuestro trabajo desplegado en la nube y totalmente funcional.
+
 ## Referencias
+
+[1 Guión de la práctica](https://ull-esit-inf-dsi-2223.github.io/prct12-destravate-api/)
+[2 Apuntes de la asignatura] (https://ull-esit-inf-dsi-2223.github.io/nodejs-theory/)
+

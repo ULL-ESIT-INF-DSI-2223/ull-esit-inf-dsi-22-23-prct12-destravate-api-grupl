@@ -193,7 +193,7 @@ describe('User All', () => {
     it('Should successfully update friends user 1', async () => {
       await request(app).patch('/users?name=marco').send({friends: [0]}).expect(200);
     });   
-    it('Should successfully update groups user 1', async () => {
+    it('Should successfully update groups user marco', async () => {
       await request(app).patch('/users?name=marco').send({groups: [1]}).expect(200);
     });
     it('Should successfully update f user 1', async () => {   

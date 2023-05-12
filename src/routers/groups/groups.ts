@@ -12,11 +12,61 @@
  */
 
 import express from 'express';
-import { GroupsModel } from '../../models/groups.js';
+import { GroupsDocumentInterface, GroupsModel } from '../../models/groups.js';
 import { Users } from '../../models/users.js';
 import { Track } from '../../models/tracks.js';
 
 export const groupsRouter = express.Router();
+
+
+export const orderGroupRankingAndUpdate = async (group: GroupsDocumentInterface) => {
+ 
+  const groupsOrdered = [];
+  try {
+  
+  const selectedGroup = await GroupsModel.findById(group);
+  if (!selectedGroup) {
+    return false;
+  }
+  for (const user of selectedGroup.ranking) {
+    const user_ = await Users.findOne({id: user});
+    groupsOrdered.push(user_);
+  }
+  if (groupsOrdered.length === 0) {
+    return false
+  }
+
+  groupsOrdered.sort((a, b) => {
+
+    const aStats: number = a?.stats[2][0] as number;
+    const bStats: number = b?.stats[2][0] as number;
+  
+    if (aStats >= bStats) {
+      return -1;
+    } else if (aStats < bStats) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+
+    const ranking_ = [];
+    for (const user of groupsOrdered) {
+      if (!user) {
+        return false;
+      }
+      ranking_.push(user.id);
+    }
+
+    await GroupsModel.findOneAndUpdate({ _id: group }, { ranking: ranking_ });
+
+    return true;
+  }
+  catch (error) {
+    return error;
+  }    
+} 
+
 
 /** 
  * 
@@ -68,7 +118,8 @@ groupsRouter.post('/groups', async (req, res) => {
     const group_ = new GroupsModel({
       ...req.body,
       participants: arrayIDUsers,
-      favouriteRoutes: arrayIDRoutes
+      favouriteRoutes: arrayIDRoutes,
+      ranking: req.body.participants
     });
 
   
@@ -77,6 +128,11 @@ groupsRouter.post('/groups', async (req, res) => {
     for (const user of arrayIDUsers) {
       await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group_._id} });
     }
+
+    await orderGroupRankingAndUpdate(group_._id);
+
+
+
     
     return res.status(201).send(group_);
   } catch (error) {
@@ -188,6 +244,7 @@ groupsRouter.patch('/groups', async (req, res) => {
           }
           arrayParticipants.push(user_._id);
         }
+        req.body.ranking = req.body.participants;
         req.body.participants = arrayParticipants;
       }
     // Comprobar que las rutas del grupo existen
@@ -216,6 +273,7 @@ groupsRouter.patch('/groups', async (req, res) => {
             for (const user of req.body.participants) {
               await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group._id } });
             }
+            await orderGroupRankingAndUpdate(group._id);
           }
           return res.send(group);
         } catch (error) {
@@ -257,6 +315,7 @@ groupsRouter.patch('/groups', async (req, res) => {
             }
             arrayParticipants.push(user_._id);
           }
+          req.body.ranking = req.body.participants;
           req.body.participants = arrayParticipants;
         }
 
@@ -286,6 +345,7 @@ groupsRouter.patch('/groups', async (req, res) => {
               for (const user of req.body.participants) {
                 await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group._id } });
               }
+              await orderGroupRankingAndUpdate(group._id);
             }
             return res.send(group);
           } catch (error) {
@@ -305,6 +365,7 @@ groupsRouter.patch('/groups', async (req, res) => {
  */
 groupsRouter.delete('/groups', async (req, res) => {
   const filter = req.query.name?{name: req.query.name.toString()}:{};
+
 
   try {
     const group_ = await GroupsModel.findOne(filter);

@@ -55,8 +55,9 @@ trackRouter.post('/tracks', async (req, res) => {
       users: arrayIDUsers
     });
 
-    for(const user of req.body.users) {
+    for(const user of arrayIDUsers) {
       await Users.findOneAndUpdate({_id: user._id}, {$push: {favRoutes: track._id}});
+      
     }
     
     const track_ = await track.save();

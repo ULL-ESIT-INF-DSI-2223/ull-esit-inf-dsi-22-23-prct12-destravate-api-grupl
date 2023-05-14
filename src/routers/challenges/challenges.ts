@@ -270,6 +270,7 @@ challengesRouter.patch('/challenges/:id', async(req, res) => {
       });
     } else {
       if (req.body.idUsersChallenge) {
+        const arrayIDUsers = [];
         for (const user of req.body.idUsersChallenge) {
           const userDB = await Users.findOne({id: user});
           if (!userDB) {
@@ -277,9 +278,12 @@ challengesRouter.patch('/challenges/:id', async(req, res) => {
               error: "User not found"
             });
           }
+          arrayIDUsers.push(userDB._id);
         }
+        req.body.idUsersChallenge = arrayIDUsers;
       }
       if (req.body.ruteChallenge) {
+        const arrayIDRoutes = [];
         for (const route of req.body.ruteChallenge) {
           const routeDB = await Track.findOne({id: route});
           if (!routeDB) {
@@ -287,7 +291,9 @@ challengesRouter.patch('/challenges/:id', async(req, res) => {
               error: "Route not found"
             });
           }
+          arrayIDRoutes.push(routeDB._id);
         }
+        req.body.ruteChallenge = arrayIDRoutes;
       }         
       try{
         const challenge = await Challenges.findOneAndUpdate({id: req.params.id}, req.body, {

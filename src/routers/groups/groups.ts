@@ -12,60 +12,11 @@
  */
 
 import express from 'express';
-import { GroupsDocumentInterface, GroupsModel } from '../../models/groups.js';
+import {  GroupsModel } from '../../models/groups.js';
 import { Users } from '../../models/users.js';
 import { Track } from '../../models/tracks.js';
 
 export const groupsRouter = express.Router();
-
-
-export const orderGroupRankingAndUpdate = async (group: GroupsDocumentInterface) => {
- 
-  const groupsOrdered = [];
-  try {
-  
-  const selectedGroup = await GroupsModel.findById(group);
-  if (!selectedGroup) {
-    return false;
-  }
-  for (const user of selectedGroup.ranking) {
-    const user_ = await Users.findOne({id: user});
-    groupsOrdered.push(user_);
-  }
-  if (groupsOrdered.length === 0) {
-    return false
-  }
-
-  groupsOrdered.sort((a, b) => {
-
-    const aStats: number = a?.stats[2][0] as number;
-    const bStats: number = b?.stats[2][0] as number;
-  
-    if (aStats >= bStats) {
-      return -1;
-    } else if (aStats < bStats) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-
-    const ranking_ = [];
-    for (const user of groupsOrdered) {
-      if (!user) {
-        return false;
-      }
-      ranking_.push(user.id);
-    }
-
-    await GroupsModel.findOneAndUpdate({ _id: group }, { ranking: ranking_ });
-
-    return true;
-  }
-  catch (error) {
-    return error;
-  }    
-} 
 
 
 /** 
@@ -119,7 +70,7 @@ groupsRouter.post('/groups', async (req, res) => {
       ...req.body,
       participants: arrayIDUsers,
       favouriteRoutes: arrayIDRoutes,
-      ranking: req.body.participants
+      ranking: arrayIDUsers
     });
 
   
@@ -129,11 +80,7 @@ groupsRouter.post('/groups', async (req, res) => {
       await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group_._id} });
     }
 
-    await orderGroupRankingAndUpdate(group_._id);
 
-
-
-    
     return res.status(201).send(group_);
   } catch (error) {
     return res.status(500).send(error);
@@ -163,7 +110,8 @@ groupsRouter.get('/groups', async (req, res) => {
   try {
     const group = await GroupsModel.find(filter).populate([
       {path: 'participants', select: 'name'},
-      {path: 'favouriteRoutes', select: 'name'}
+      {path: 'favouriteRoutes', select: 'name'},
+      {path: 'ranking', select: 'name', options: { sort: { 'stats.2.0': -1 } }}
       ]);
     if(group.length === 0) {
       return res.status(404).send(
@@ -198,7 +146,8 @@ groupsRouter.get('/groups/:id', async (req, res) => {
   const filter = req.params.id?{id: req.params.id}:{};
   try {
     const group = await GroupsModel.find(filter).populate([{'path': 'participants', select: 'name'}, 
-    {'path': 'favouriteRoutes', select: 'name'}]);
+    {'path': 'favouriteRoutes', select: 'name'},
+    {path: 'ranking', select: 'name', options: { sort: { 'stats.2.0': -1 } }}]);
     if(group.length === 0) {
       return res.status(404).send(
         {"error": "Group not found"}
@@ -244,7 +193,7 @@ groupsRouter.patch('/groups', async (req, res) => {
           }
           arrayParticipants.push(user_._id);
         }
-        req.body.ranking = req.body.participants;
+        req.body.ranking = arrayParticipants;
         req.body.participants = arrayParticipants;
       }
     // Comprobar que las rutas del grupo existen
@@ -271,9 +220,8 @@ groupsRouter.patch('/groups', async (req, res) => {
           }
           if (req.body.participants) {
             for (const user of req.body.participants) {
-              await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group._id } });
+              await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group._id} });
             }
-            await orderGroupRankingAndUpdate(group._id);
           }
           return res.send(group);
         } catch (error) {
@@ -315,7 +263,7 @@ groupsRouter.patch('/groups', async (req, res) => {
             }
             arrayParticipants.push(user_._id);
           }
-          req.body.ranking = req.body.participants;
+          req.body.ranking = arrayParticipants;
           req.body.participants = arrayParticipants;
         }
 
@@ -345,7 +293,6 @@ groupsRouter.patch('/groups', async (req, res) => {
               for (const user of req.body.participants) {
                 await Users.findOneAndUpdate({ _id: user }, { $push: { groups: group._id } });
               }
-              await orderGroupRankingAndUpdate(group._id);
             }
             return res.send(group);
           } catch (error) {

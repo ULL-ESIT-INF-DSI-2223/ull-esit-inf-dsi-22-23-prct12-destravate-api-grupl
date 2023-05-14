@@ -249,7 +249,7 @@ export interface GroupsDocumentInterface extends Document {
   name: string;
   participants: UsersDocumentInterface[];
   stats: [[number, number], [number, number], [number, number]];
-  ranking: number[];
+  ranking: UsersDocumentInterface[];
   favouriteRoutes: TrackDocumentInterface[];
   historicRoutes: [
     {
@@ -280,8 +280,9 @@ const GroupsSchema = new Schema<GroupsDocumentInterface>({
     required: true,
   },
   ranking: {
-    type: [Number],
+    type: [Schema.Types.ObjectId],
     required: true,
+    ref: 'User'
   },
   favouriteRoutes: {
     type: [Schema.Types.ObjectId],
@@ -963,6 +964,19 @@ export interface ChallengeDocumentInterface extends Document {
 
 }
 ```
+
+Finalmente, existe una relación entre el ranking de los distintos grupos y las estadísticas personales de sus usuarios, por tanto, cada vez que se obtiene el ranking de un grupo mediante un ```GET```, ya sea con su nombre o con su id, a la hora de realizar el populate, dicho array de ranking se ordena de la siguiente forma: 
+
+```ts
+    const group = await GroupsModel.find(filter).populate([
+      {path: 'participants', select: 'name'},
+      {path: 'favouriteRoutes', select: 'name'},
+      {path: 'ranking', select: 'name', options: { sort: { 'stats.2.0': -1 } }}
+      ]);
+```
+
+Haciendo uso de las opciones de sort de Mongoose, se ordena el array de ranking de mayor a menor, en función de la distancia total recorrida por cada usuario, que se encuentra en la posición 2 del array de estadísticas personales.
+
 
 ## Conclusión
 

@@ -10,13 +10,11 @@
  * @email alu0101397375@ull.edu.es
  * @date 15/05/2023
  */
-
 import express from 'express';
 import { Users } from '../../models/users.js';
 import { GroupsModel} from '../../models/groups.js';
 import { Track } from '../../models/tracks.js';
 import { Challenges } from '../../models/challenges.js';
-import { orderGroupRankingAndUpdate } from '../groups/groups.js';
 
 
 export const usersRouter = express.Router();
@@ -122,10 +120,11 @@ usersRouter.post('/users', async (req, res) => {
     for(const friend of user_.friends) {
       await Users.findOneAndUpdate({_id: friend}, {$push: {friends: user_._id}});
     }
+
     // Añadir el usuario de los grupos
     for (const group of user_.groups) {
-      await GroupsModel.findOneAndUpdate({_id: group}, {$push: {participants: user_._id, ranking: user_.id}});
-      await orderGroupRankingAndUpdate(group);
+      await GroupsModel.findOneAndUpdate({_id: group}, {$push: {participants: user_._id, ranking: user_._id}});
+      //await orderGroupRankingAndUpdate(group);
     }
 
     // Añadir de las rutas favoritas
@@ -332,21 +331,11 @@ usersRouter.patch('/users', async(req, res) => {
               const group_object = await GroupsModel.findOne({_id: group});
               if (group_object !== null){
                 if (!group_object.participants.includes(user._id)){
-                  await GroupsModel.findOneAndUpdate({_id: group}, {$push: {participants: user._id, ranking: user.id}});
+                  await GroupsModel.findOneAndUpdate({_id: group}, {$push: {participants: user._id, ranking: user._id}});
                 }
               }
-              
-              await orderGroupRankingAndUpdate(group);
             }
           }
-
-          // MODIFICADO
-          if (req.body.stats){
-            for (const group of user.groups) {
-              await orderGroupRankingAndUpdate(group);
-            }
-          }
-
           if (req.body.favRoutes){
             // Añadir de las rutas favoritas
             for (const route of user.favRoutes) {
@@ -480,16 +469,9 @@ usersRouter.patch('/users/:id', async(req, res) => {
               const group_object = await GroupsModel.findOne({_id: group});
               if (group_object !== null){
                 if (!group_object.participants.includes(user._id)){
-                  await GroupsModel.findOneAndUpdate({_id: group}, {$push: {participants: user._id, ranking: user.id}});
+                  await GroupsModel.findOneAndUpdate({_id: group}, {$push: {participants: user._id, ranking: user._id}});
                 }
               }
-            }
-          }
-
-          // MODIFICADO
-          if (req.body.stats){
-            for (const group of user.groups) {
-              await orderGroupRankingAndUpdate(group);
             }
           }
           if (req.body.favRoutes){
@@ -543,9 +525,8 @@ usersRouter.delete('/users/', async(req, res) => {
     
     // Eliminar el usuario de los grupos
     for (const group of user.groups) {
-      await GroupsModel.findOneAndUpdate({ _id: group }, { $pull: { participants: user._id, ranking: user.id } }
+      await GroupsModel.findOneAndUpdate({ _id: group }, { $pull: { participants: user._id, ranking: user._id } }
       );
-      await orderGroupRankingAndUpdate(group);
     }
 
     // Eliminar de las rutas favoritas
@@ -598,7 +579,7 @@ usersRouter.delete('/users/:id', async(req, res) => {
     
     // Eliminar el usuario de los grupos
     for (const group of user.groups) {
-      await GroupsModel.findOneAndUpdate({_id: group}, {$pull: {participants: user._id, ranking: user.id}});
+      await GroupsModel.findOneAndUpdate({_id: group}, {$pull: {participants: user._id, ranking: user._id}});
     }
 
     // Eliminar de las rutas favoritas

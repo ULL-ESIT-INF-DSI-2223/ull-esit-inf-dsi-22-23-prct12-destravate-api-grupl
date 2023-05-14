@@ -34,7 +34,7 @@ export interface GroupsDocumentInterface extends Document {
   name: string;
   participants: UsersDocumentInterface[];
   stats: [[number, number], [number, number], [number, number]];
-  ranking: number[];
+  ranking: UsersDocumentInterface[];
   favouriteRoutes: TrackDocumentInterface[];
   historicRoutes: [
     {
@@ -79,8 +79,9 @@ const GroupsSchema = new Schema<GroupsDocumentInterface>({
     required: true,
   },
   ranking: {
-    type: [Number],
+    type: [Schema.Types.ObjectId],
     required: true,
+    ref: 'User'
   },
   favouriteRoutes: {
     type: [Schema.Types.ObjectId],
